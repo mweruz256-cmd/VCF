@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>NextGen Status Boost</title>
+<style>
+  :root{
+    --bg-app: #0b141a;
+    --bg-panel: #111b21;
+    --accent: #00a884;
+    --accent-bright: #00e676;
+    --text-primary: #e9edef;
+    --text-secondary: #8696a0;
+    --danger: #f15c4f;
+    --border: #2a3942;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body{
+    margin:0;
+    background: var(--bg-app);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height:100vh;
+    padding: 24px 16px 48px;
+  }
+
+  .wrap{
+    max-width: 480px;
+    margin: 0 auto;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  .card{
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  /* ---- Module 1: Progress Hub ---- */
+  .title{
+    font-size:24px;
+    font-weight:700;
+    color: var(--accent);
+    margin:0 0 4px;
+  }
+
+  .target-label{
+    color: var(--text-secondary);
+    font-size:14px;
+    margin:0 0 16px;
+  }
+
+  .track{
+    width:100%;
+    height:12px;
+    background:#222e35;
+    border-radius:999px;
+    overflow:hidden;
+  }
+
+  .fill{
+    height:100%;
+    width:0%;
+    background: var(--accent);
+    border-radius:999px;
+    transition: width .5s ease;
+  }
+
+  .counter{
+    text-align:center;
+    margin: 10px 0 18px;
+    font-size:15px;
+    color: var(--text-primary);
+  }
+
+  .btn{
+    width:100%;
+    display:block;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    text-align:center;
+  }
+
+  #downloadBtn{
+    background:#222e35;
+    color: var(--text-secondary);
+    cursor:not-allowed;
+  }
+
+  #downloadBtn.unlocked{
+    background: var(--accent);
+    color:#ffffff;
+    cursor:pointer;
+  }
+
+  /* ---- Module 2: Registration ---- */
+  .card-heading{
+    font-size:18px;
+    font-weight:500;
+    margin:0 0 16px;
+  }
+
+  label.field-label{
+    display:block;
+    font-size:13px;
+    color: var(--text-secondary);
+    margin-bottom:6px;
+  }
+
+  input[type="text"],
+  input[type="tel"]{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background: var(--bg-app);
+    color: var(--text-primary);
+    font-size:15px;
+    outline:none;
+    margin-bottom:14px;
+  }
+
+  input[type="text"]:focus,
+  input[type="tel"]:focus{
+    border-color: var(--accent);
+  }
+
+  #submitBtn{
+    background: var(--accent);
+    color:#ffffff;
+  }
+
+  #submitBtn:disabled{
+    opacity:0.6;
+    cursor:not-allowed;
+  }
+
+  .msg{
+    display:none;
+    text-align:center;
+    font-size:13px;
+    margin-top:12px;
+  }
+
+  .msg.neutral{ color: var(--text-secondary); }
+  .msg.error{ color: var(--danger); }
+  .msg.success{ color: var(--accent-bright); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- Module 1: Crowd-Target Progress Hub -->
+  <div class="card">
+    <h1 class="title">NextGen Status Boost</h1>
+    <p class="target-label">Target Goal: 1500 Contacts</p>
+
+    <div class="track">
+      <div class="fill" id="progressFill"></div>
+    </div>
+    <p class="counter" id="counterText">0 / 1500 Joined</p>
+
+    <button class="btn" id="downloadBtn" disabled>📥 Download VCF Compiled List</button>
+  </div>
+
+  <!-- Module 2: Registration Console -->
+  <div class="card">
+    <h2 class="card-heading">Register for this Round</h2>
+
+    <label class="field-label" for="nameInput">Full name</label>
+    <input type="text" id="nameInput" placeholder="Your Full Name" maxlength="100" required />
+
+    <label class="field-label" for="phoneInput">Phone number</label>
+    <input type="tel" id="phoneInput" placeholder="+256700000000" value="+" required />
+
+    <button class="btn" id="submitBtn">Join Campaign</button>
+
+    <p class="msg" id="formMsg"></p>
+  </div>
+
+</div>
+
+<script>
+  // ======= CONFIGURATION =======
+  // Paste your deployed Google Apps Script Web App URL below.
+  const GAS_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+  const TARGET = 1500;
+  // ==============================
+
+  const progressFill = document.getElementById('progressFill');
+  const counterText  = document.getElementById('counterText');
+  const downloadBtn  = document.getElementById('downloadBtn');
+  const nameInput    = document.getElementById('nameInput');
+  const phoneInput   = document.getElementById('phoneInput');
+  const submitBtn    = document.getElementById('submitBtn');
+  const formMsg      = document.getElementById('formMsg');
+
+  let latestContacts = [];
+
+  function showMsg(text, kind){
+    formMsg.textContent = text;
+    formMsg.className = 'msg ' + kind;
+    formMsg.style.display = 'block';
+  }
+
+  function hideMsg(){
+    formMsg.style.display = 'none';
+  }
+
+  function updateProgressUI(count){
+    const pct = Math.max(0, Math.min(100, (count / TARGET) * 100));
+    progressFill.style.width = pct + '%';
+    counterText.textContent = count + ' / ' + TARGET + ' Joined';
+
+    if (count >= TARGET){
+      downloadBtn.disabled = false;
+      downloadBtn.classList.add('unlocked');
+    } else {
+      downloadBtn.disabled = true;
+      downloadBtn.classList.remove('unlocked');
+    }
+  }
+
+  async function refreshStatus(){
+    try{
+      const res = await fetch(GAS_URL, { method: 'GET' });
+      const data = await res.json();
+      latestContacts = Array.isArray(data) ? data : [];
+      updateProgressUI(latestContacts.length);
+    }catch(err){
+      // Silently fail; leave last known state on screen.
+      console.error('Status refresh failed', err);
+    }
+  }
+
+  function sanitizePhone(raw){
+    return raw.replace(/[\s\-()]/g, '');
+  }
+
+  function validate(name, phone){
+    if (!name){
+      return 'Please enter your full name.';
+    }
+    if (phone.charAt(0) !== '+'){
+      return 'Please include country code starting with +';
+    }
+    const digits = phone.slice(1);
+    if (!/^\d+$/.test(digits) || digits.length < 7 || digits.length > 15){
+      return 'Please include country code starting with +';
+    }
+    return null;
+  }
+
+  submitBtn.addEventListener('click', async () => {
+    const name = nameInput.value.trim().slice(0, 100);
+    const phone = sanitizePhone(phoneInput.value.trim());
+
+    const validationError = validate(name, phone);
+    if (validationError){
+      showMsg(validationError, 'error');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    showMsg('Registering in database...', 'neutral');
+
+    try{
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ name, phone })
+      });
+      const result = await res.json();
+
+      if (result.status === 'exists'){
+        showMsg('This phone number is already registered.', 'error');
+      } else if (result.status === 'success'){
+        showMsg('Success! You are added to this boost round.', 'success');
+        nameInput.value = '';
+        phoneInput.value = '+';
+        updateProgressUI(result.count);
+      } else {
+        showMsg('Something went wrong. Please try again.', 'error');
+      }
+    }catch(err){
+      console.error(err);
+      showMsg('Network error. Please try again.', 'error');
+    }finally{
+      submitBtn.disabled = false;
+    }
+  });
+
+  downloadBtn.addEventListener('click', async () => {
+    if (downloadBtn.disabled) return;
+
+    try{
+      const res = await fetch(GAS_URL, { method: 'GET' });
+      const contacts = await res.json();
+
+      let vcardBuffer = '';
+      contacts.forEach((contact, index) => {
+        const label = 'Gain ' + (index + 1) + ' (' + contact.name + ')';
+        vcardBuffer += 'BEGIN:VCARD\n';
+        vcardBuffer += 'VERSION:3.0\n';
+        vcardBuffer += 'N:;' + label + ';;;\n';
+        vcardBuffer += 'FN:' + label + '\n';
+        vcardBuffer += 'TEL;TYPE=CELL:' + contact.phone + '\n';
+        vcardBuffer += 'END:VCARD\n';
+      });
+
+      const blob = new Blob([vcardBuffer], { type: 'text/vcard' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'whatsapp_gain_list.vcf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }catch(err){
+      console.error('Download failed', err);
+      alert('Could not generate the file. Please try again.');
+    }
+  });
+
+  // Initial + periodic status sync
+  refreshStatus();
+  setInterval(refreshStatus, 15000);
+</script>
+
+</body>
+</html>
