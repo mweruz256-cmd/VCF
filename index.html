@@ -2,350 +2,591 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>NextGen Status Boost</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contact Ledger — Registration Drive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg-app: #0b141a;
-    --bg-panel: #111b21;
-    --accent: #00a884;
-    --accent-bright: #00e676;
-    --text-primary: #e9edef;
-    --text-secondary: #8696a0;
-    --danger: #f15c4f;
-    --border: #2a3942;
+  :root {
+    --bg: #0e1013;
+    --bg-grid: #14171b;
+    --surface: #161920;
+    --surface-raised: #1e232b;
+    --border: #262c35;
+    --border-soft: #1e232b;
+    --accent: #e2a33e;
+    --accent-soft: rgba(226, 163, 62, 0.14);
+    --accent-text: #1a1305;
+    --success: #5fcf9a;
+    --success-soft: rgba(95, 207, 154, 0.12);
+    --danger: #e2645a;
+    --danger-soft: rgba(226, 100, 90, 0.12);
+    --text: #edeff2;
+    --text-muted: #8991a0;
+    --text-faint: #565c66;
+    --radius: 14px;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
   }
 
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { box-sizing: border-box; }
 
-  body{
-    margin:0;
-    background: var(--bg-app);
-    color: var(--text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    min-height:100vh;
-    padding: 24px 16px 48px;
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
   }
 
-  .wrap{
+  body {
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 0);
+    background-size: 22px 22px;
+    display: flex;
+    justify-content: center;
+    padding: 48px 18px 64px;
+  }
+
+  .wrap {
+    width: 100%;
     max-width: 480px;
-    margin: 0 auto;
-    display:flex;
-    flex-direction:column;
-    gap:16px;
   }
 
-  .card{
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-  }
-
-  /* ---- Module 1: Progress Hub ---- */
-  .title{
-    font-size:24px;
-    font-weight:700;
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     color: var(--accent);
-    margin:0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
   }
 
-  .target-label{
-    color: var(--text-secondary);
-    font-size:14px;
-    margin:0 0 16px;
-  }
-
-  .track{
-    width:100%;
-    height:12px;
-    background:#222e35;
-    border-radius:999px;
-    overflow:hidden;
-  }
-
-  .fill{
-    height:100%;
-    width:0%;
+  .eyebrow::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
     background: var(--accent);
-    border-radius:999px;
-    transition: width .5s ease;
+    display: inline-block;
+    transform: rotate(45deg);
   }
 
-  .counter{
-    text-align:center;
-    margin: 10px 0 18px;
-    font-size:15px;
-    color: var(--text-primary);
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1.15;
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
   }
 
-  .btn{
-    width:100%;
-    display:block;
-    padding:14px;
-    border:none;
-    border-radius:10px;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    text-align:center;
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.55;
+    margin: 0 0 32px;
+    max-width: 46ch;
   }
 
-  #downloadBtn{
-    background:#222e35;
-    color: var(--text-secondary);
-    cursor:not-allowed;
+  /* ---------------- Ledger (signature element) ---------------- */
+
+  .ledger {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 26px 24px 22px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
   }
 
-  #downloadBtn.unlocked{
+  .ledger::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
     background: var(--accent);
-    color:#ffffff;
-    cursor:pointer;
+    opacity: 0.6;
   }
 
-  /* ---- Module 2: Registration ---- */
-  .card-heading{
-    font-size:18px;
-    font-weight:500;
-    margin:0 0 16px;
+  .ledger-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
   }
 
-  label.field-label{
-    display:block;
-    font-size:13px;
-    color: var(--text-secondary);
-    margin-bottom:6px;
+  .ledger-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .ledger-status {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  .ledger-status.is-complete { color: var(--success); }
+
+  .odometer {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .odometer-count {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 46px;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    transition: color 0.3s ease;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .odometer-count.pulse {
+    color: var(--accent);
+  }
+
+  .odometer-target {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--text-faint);
+    padding-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rail {
+    display: flex;
+    gap: 3px;
+    height: 22px;
+    align-items: flex-end;
+  }
+
+  .rail-tick {
+    flex: 1 1 0;
+    background: var(--border);
+    border-radius: 2px 2px 0 0;
+    height: 40%;
+    transition: background 0.4s ease, height 0.4s ease;
+  }
+
+  .rail-tick.filled {
+    background: var(--accent);
+    height: 100%;
+  }
+
+  .rail-tick.filled.complete {
+    background: var(--success);
+  }
+
+  /* ---------------- Form ---------------- */
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+
+  .field { margin-bottom: 16px; }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 7px;
   }
 
   input[type="text"],
-  input[type="tel"]{
-    width:100%;
-    padding:12px;
-    border-radius:8px;
-    border:1px solid var(--border);
-    background: var(--bg-app);
-    color: var(--text-primary);
-    font-size:15px;
-    outline:none;
-    margin-bottom:14px;
+  input[type="tel"] {
+    width: 100%;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 12px 13px;
+    font-size: 15px;
+    font-family: var(--font-body);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
 
-  input[type="text"]:focus,
-  input[type="tel"]:focus{
+  input[type="tel"] { font-family: var(--font-mono); }
+
+  input::placeholder { color: var(--text-faint); }
+
+  input:focus {
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
 
-  #submitBtn{
+  .hint {
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-top: 6px;
+  }
+
+  .char-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    text-align: right;
+    margin-top: 4px;
+  }
+
+  button {
+    font-family: var(--font-body);
+    cursor: pointer;
+    border: none;
+    outline: none;
+  }
+
+  .btn-primary {
+    width: 100%;
     background: var(--accent);
-    color:#ffffff;
+    color: var(--accent-text);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 13px 16px;
+    border-radius: 9px;
+    transition: filter 0.15s ease, transform 0.1s ease;
   }
 
-  #submitBtn:disabled{
-    opacity:0.6;
-    cursor:not-allowed;
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-primary:active { transform: scale(0.99); }
+
+  .btn-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    filter: none;
   }
 
-  .msg{
-    display:none;
-    text-align:center;
-    font-size:13px;
-    margin-top:12px;
+  .btn-download {
+    width: 100%;
+    background: var(--success);
+    color: #08211a;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 13px 16px;
+    border-radius: 9px;
+    margin-top: 14px;
+    transition: filter 0.15s ease, transform 0.1s ease;
   }
 
-  .msg.neutral{ color: var(--text-secondary); }
-  .msg.error{ color: var(--danger); }
-  .msg.success{ color: var(--accent-bright); }
+  .btn-download:hover { filter: brightness(1.08); }
+  .btn-download:active { transform: scale(0.99); }
+
+  .message {
+    font-size: 13.5px;
+    padding: 11px 13px;
+    border-radius: 9px;
+    margin-top: 14px;
+    line-height: 1.45;
+    display: none;
+  }
+
+  .message.show { display: block; }
+
+  .message.success {
+    background: var(--success-soft);
+    color: var(--success);
+    border: 1px solid rgba(95, 207, 154, 0.25);
+  }
+
+  .message.error {
+    background: var(--danger-soft);
+    color: var(--danger);
+    border: 1px solid rgba(226, 100, 90, 0.25);
+  }
+
+  .footer-note {
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 12px;
+    margin-top: 26px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 400px) {
+    .odometer-count { font-size: 38px; }
+    h1 { font-size: 25px; }
+  }
 </style>
 </head>
 <body>
-
 <div class="wrap">
 
-  <div class="card">
-    <h1 class="title">NextGen Status Boost</h1>
-    <p class="target-label">Target Goal: 1500 Contacts</p>
+  <div class="eyebrow">Vcf file</div>
+  <h1>Add your contact to the vcf</h1>
+  <p class="subtitle">
+    Register your name and phone number below. Once the VCF reaches its
+    target, everyone download the vcf file.
+  </p>
 
-    <div class="track">
-      <div class="fill" id="progressFill"></div>
+  <div class="ledger">
+    <div class="ledger-top">
+      <span class="ledger-label">Registrations</span>
+      <span class="ledger-status" id="ledgerStatus">loading…</span>
     </div>
-    <p class="counter" id="counterText">0 / 1500 Joined</p>
-
-    <button class="btn" id="downloadBtn" disabled>📥 Download VCF Compiled List</button>
+    <div class="odometer">
+      <span class="odometer-count" id="odometerCount">–</span>
+      <span class="odometer-target" id="odometerTarget">/ –</span>
+    </div>
+    <div class="rail" id="rail"></div>
   </div>
 
   <div class="card">
-    <h2 class="card-heading">Register for this Round</h2>
+    <form id="regForm" novalidate>
+      <div class="field">
+        <label for="nameInput">Full name</label>
+        <input type="text" id="nameInput" maxlength="100" placeholder="Jane Doe" autocomplete="name" />
+        <div class="char-count" id="charCount">0 / 100</div>
+      </div>
+      <div class="field">
+        <label for="phoneInput">Phone number</label>
+        <input type="tel" id="phoneInput" placeholder="+15551234567" autocomplete="tel" />
+        <div class="hint">Include the country code with the phone number "+", e.g. +15551234567</div>
+      </div>
+      <button type="submit" class="btn-primary" id="submitBtn">Add contact</button>
+      <div class="message" id="formMessage"></div>
+    </form>
 
-    <label class="field-label" for="nameInput">Full name</label>
-    <input type="text" id="idNameInput" placeholder="Your Full Name" maxlength="100" required />
-
-    <label class="field-label" for="phoneInput">Phone number</label>
-    <input type="tel" id="idPhoneInput" placeholder="+256700000000" value="+" required />
-
-    <button class="btn" id="submitBtn">Join Campaign</button>
-
-    <p class="msg" id="formMsg"></p>
+    <button type="button" class="btn-download" id="downloadBtn" style="display:none;">
+      Download contact file (.vcf)
+    </button>
   </div>
 
+  <p class="footer-note">
+    This is an independent registration tool for running a contact-collection
+    campaign. It is not affiliated with, endorsed by, or a product of any
+    messaging platform.
+  </p>
 </div>
 
 <script>
-  // ======= CONFIGURATION =======
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwmX4pWl5NtXDlMqGMIax20otxp-k027MYY-CBANxGOVblJLGOuwM_Ee2Zh39pY7PC8/exec";
-  const TARGET = 1500;
-  // ==============================
+  // ---------------------------------------------------------------------
+  // Configuration — set this to your deployed Apps Script Web App URL
+  // ---------------------------------------------------------------------
+  const API_URL = 'https://script.google.com/macros/s/AKfycbyVosbUWCkduMciMjM4QuU8as9WzppiMvF7Exyqyso6EK40OzkPm-k0rMiYyiBEe0PJ/exec';
 
-  const progressFill = document.getElementById('progressFill');
-  const counterText  = document.getElementById('counterText');
-  const downloadBtn  = document.getElementById('downloadBtn');
-  const nameInput    = document.getElementById('idNameInput');
-  const phoneInput   = document.getElementById('idPhoneInput');
-  const submitBtn    = document.getElementById('submitBtn');
-  const formMsg      = document.getElementById('formMsg');
+  const RAIL_SEGMENTS = 40; // purely visual granularity of the tick rail
 
-  let latestContacts = [];
+  const els = {
+    ledgerStatus: document.getElementById('ledgerStatus'),
+    odometerCount: document.getElementById('odometerCount'),
+    odometerTarget: document.getElementById('odometerTarget'),
+    rail: document.getElementById('rail'),
+    form: document.getElementById('regForm'),
+    nameInput: document.getElementById('nameInput'),
+    phoneInput: document.getElementById('phoneInput'),
+    charCount: document.getElementById('charCount'),
+    submitBtn: document.getElementById('submitBtn'),
+    formMessage: document.getElementById('formMessage'),
+    downloadBtn: document.getElementById('downloadBtn'),
+  };
 
-  function showMsg(text, kind){
-    formMsg.textContent = text;
-    formMsg.className = 'msg ' + kind;
-    formMsg.style.display = 'block';
+  let lastCount = null;
+
+  // Build the tick rail once
+  for (let i = 0; i < RAIL_SEGMENTS; i++) {
+    const tick = document.createElement('div');
+    tick.className = 'rail-tick';
+    els.rail.appendChild(tick);
   }
 
-  function hideMsg(){
-    formMsg.style.display = 'none';
+  function setMessage(text, type) {
+    els.formMessage.textContent = text;
+    els.formMessage.className = 'message show ' + type;
   }
 
-  function updateProgressUI(count){
-    const pct = Math.max(0, Math.min(100, (count / TARGET) * 100));
-    progressFill.style.width = pct + '%';
-    counterText.textContent = count + ' / ' + TARGET + ' Joined';
+  function clearMessage() {
+    els.formMessage.className = 'message';
+  }
 
-    if (count >= TARGET){
-      downloadBtn.disabled = false;
-      downloadBtn.classList.add('unlocked');
+  function sanitizePhoneClient(raw) {
+    let cleaned = String(raw || '').replace(/[\s\-()]/g, '');
+    if (cleaned.charAt(0) !== '+') {
+      return { valid: false, error: 'Phone number must start with a "+" and country code.' };
+    }
+    const digits = cleaned.slice(1);
+    if (!/^\d{7,15}$/.test(digits)) {
+      return { valid: false, error: 'Enter a valid international number (7–15 digits after the "+").' };
+    }
+    return { valid: true, phone: '+' + digits };
+  }
+
+  function renderStats(stats) {
+    const count = stats.count;
+    const target = stats.target;
+    const complete = stats.complete || count >= target;
+
+    els.odometerTarget.textContent = '/ ' + target.toLocaleString();
+
+    if (lastCount !== null && count !== lastCount) {
+      els.odometerCount.classList.add('pulse');
+      setTimeout(() => els.odometerCount.classList.remove('pulse'), 500);
+    }
+    els.odometerCount.textContent = count.toLocaleString();
+    lastCount = count;
+
+    els.ledgerStatus.textContent = complete ? 'goal reached' : 'in progress';
+    els.ledgerStatus.classList.toggle('is-complete', complete);
+
+    const filledSegments = Math.round((Math.min(count, target) / target) * RAIL_SEGMENTS);
+    const ticks = els.rail.children;
+    for (let i = 0; i < ticks.length; i++) {
+      const filled = i < filledSegments;
+      ticks[i].classList.toggle('filled', filled);
+      ticks[i].classList.toggle('complete', filled && complete);
+    }
+
+    if (complete) {
+      els.downloadBtn.style.display = 'block';
+      els.submitBtn.disabled = true;
+      els.submitBtn.textContent = 'joined VCF';
     } else {
-      downloadBtn.disabled = true;
-      downloadBtn.classList.remove('unlocked');
+      els.downloadBtn.style.display = 'none';
+      els.submitBtn.disabled = false;
+      els.submitBtn.textContent = 'Join VCF';
     }
   }
 
-  async function refreshStatus(){
-    try{
-      const res = await fetch(GAS_URL, { method: 'GET' });
+  async function fetchStats() {
+    try {
+      const res = await fetch(API_URL + '?action=stats', { method: 'GET' });
       const data = await res.json();
-      latestContacts = Array.isArray(data) ? data : [];
-      updateProgressUI(latestContacts.length);
-    }catch(err){
-      console.error('Status refresh failed', err);
+      if (!data.error) renderStats(data);
+    } catch (err) {
+      els.ledgerStatus.textContent = 'offline';
     }
   }
 
-  function sanitizePhone(raw){
-    return raw.replace(/[\s\-()]/g, '');
-  }
+  els.nameInput.addEventListener('input', () => {
+    els.charCount.textContent = els.nameInput.value.length + ' / 100';
+  });
 
-  function validate(name, phone){
-    if (!name){
-      return 'Please enter your full name.';
-    }
-    if (phone.charAt(0) !== '+'){
-      return 'Please include country code starting with +';
-    }
-    const digits = phone.slice(1);
-    if (!/^\d+$/.test(digits) || digits.length < 7 || digits.length > 15){
-      return 'Please include country code starting with +';
-    }
-    return null;
-  }
+  els.form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearMessage();
 
-  submitBtn.addEventListener('click', async () => {
-    const name = nameInput.value.trim().slice(0, 100);
-    const phone = sanitizePhone(phoneInput.value.trim());
+    const name = els.nameInput.value.trim().slice(0, 100);
+    const phoneCheck = sanitizePhoneClient(els.phoneInput.value);
 
-    const validationError = validate(name, phone);
-    if (validationError){
-      showMsg(validationError, 'error');
+    if (!name) {
+      setMessage('Please enter your name.', 'error');
+      return;
+    }
+    if (!phoneCheck.valid) {
+      setMessage(phoneCheck.error, 'error');
       return;
     }
 
-    submitBtn.disabled = true;
-    showMsg('Registering in database...', 'neutral');
+    els.submitBtn.disabled = true;
+    els.submitBtn.textContent = 'Adding…';
 
-    try{
-      // FORCE STRING CELL VIA PREFIX: Prepending a single quote breaks math interpretation
-      const stringForcedPhone = "'" + phone;
-
-      const res = await fetch(GAS_URL, {
+    try {
+      // text/plain avoids a CORS preflight against Apps Script;
+      // the payload itself is still parsed as JSON on the server.
+      const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ name: name, phone: stringForcedPhone })
+        body: JSON.stringify({ action: 'register', name: name, phone: phoneCheck.phone }),
       });
-      const result = await res.json();
+      const data = await res.json();
 
-      if (result.status === 'exists'){
-        showMsg('This phone number is already registered.', 'error');
-      } else if (result.status === 'success'){
-        showMsg('Success! You are added to this boost round.', 'success');
-        nameInput.value = '';
-        phoneInput.value = '+';
-        updateProgressUI(result.count);
+      if (data.ok) {
+        setMessage(data.message || 'You have been added to the vcf.', 'success');
+        els.form.reset();
+        els.charCount.textContent = '0 / 100';
+        renderStats({ count: data.count, target: data.target, complete: data.complete });
       } else {
-        showMsg('Something went wrong. Please try again.', 'error');
+        setMessage(data.error || 'Something went wrong. Please try again.', 'error');
+        els.submitBtn.disabled = false;
+        els.submitBtn.textContent = 'Join VCF';
       }
-    }catch(err){
-      console.error(err);
-      showMsg('Network error. Please try again.', 'error');
-    }finally{
-      submitBtn.disabled = false;
+    } catch (err) {
+      setMessage('Could not reach the server. Please try again.', 'error');
+      els.submitBtn.disabled = false;
+      els.submitBtn.textContent = 'Join VCF';
     }
   });
 
-  downloadBtn.addEventListener('click', async () => {
-    if (downloadBtn.disabled) return;
+  els.downloadBtn.addEventListener('click', async () => {
+    els.downloadBtn.disabled = true;
+    els.downloadBtn.textContent = 'Preparing file…';
+    try {
+      const res = await fetch(API_URL + '?action=export', { method: 'GET' });
+      const data = await res.json();
 
-    try{
-      const res = await fetch(GAS_URL, { method: 'GET' });
-      const contacts = await res.json();
+      if (!data.ok) {
+        setMessage(data.error || 'Export is not available yet.', 'error');
+        return;
+      }
 
-      let vcardBuffer = '';
-      contacts.forEach((contact, index) => {
-        // Clean off any leading formatting characters or hidden single quotes before VCF conversion
-        let cleanPhone = String(contact.phone).trim();
-        if (cleanPhone.startsWith("'")) {
-          cleanPhone = cleanPhone.slice(1);
-        }
-        if (!cleanPhone.startsWith("+")) {
-          cleanPhone = "+" + cleanPhone;
-        }
-
-        const label = 'Gain ' + (index + 1) + ' (' + contact.name + ')';
-        vcardBuffer += 'BEGIN:VCARD\n';
-        vcardBuffer += 'VERSION:3.0\n';
-        vcardBuffer += 'N:;' + label + ';;;\n';
-        vcardBuffer += 'FN:' + label + '\n';
-        vcardBuffer += 'TEL;TYPE=CELL:' + cleanPhone + '\n';
-        vcardBuffer += 'END:VCARD\n';
-      });
-
-      const blob = new Blob([vcardBuffer], { type: 'text/vcard' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'whatsapp_gain_list.vcf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }catch(err){
-      console.error('Download failed', err);
-      alert('Could not generate the file. Please try again.');
+      const vcf = buildVCF(data.contacts);
+      downloadFile(vcf, 'contacts.vcf');
+    } catch (err) {
+      setMessage('Could not generate the file. Please try again.', 'error');
+    } finally {
+      els.downloadBtn.disabled = false;
+      els.downloadBtn.textContent = 'Download contact file (.vcf)';
     }
   });
 
-  // Initial + periodic status sync
-  refreshStatus();
-  setInterval(refreshStatus, 15000);
+  function escapeVCard(value) {
+    return String(value)
+      .replace(/\\/g, '\\\\')
+      .replace(/;/g, '\\;')
+      .replace(/,/g, '\\,')
+      .replace(/\n/g, '\\n');
+  }
+
+  function buildVCF(contacts) {
+    const cards = contacts.map((c) => {
+      const name = escapeVCard(c.name);
+      const phone = String(c.phone); // leading "+" preserved exactly as stored
+      return [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        'N:;' + name + ';;;',
+        'FN:' + name,
+        'TEL;TYPE=CELL:' + phone,
+        'END:VCARD',
+      ].join('\r\n');
+    });
+    return cards.join('\r\n') + '\r\n';
+  }
+
+  function downloadFile(content, filename) {
+    const blob = new Blob([content], { type: 'text/vcard;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  fetchStats();
+  setInterval(fetchStats, 15000);
 </script>
-
 </body>
 </html>
