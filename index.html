@@ -440,7 +440,7 @@
 
     if (lastCount !== null && count !== lastCount) {
       els.odometerCount.classList.add('pulse');
-      setTimeout(() => els.odometerCount.classList.remove('pulse'), 500);
+      setTimeout(() => els.odometerCount.classList.remove('pulse'), 1500);
     }
     els.odometerCount.textContent = count.toLocaleString();
     lastCount = count;
